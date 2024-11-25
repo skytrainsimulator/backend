@@ -3,7 +3,7 @@ package io.u11.skytrainsim.backend.entities.timeline
 import com.fasterxml.jackson.annotation.JsonIgnore
 import io.u11.skytrainsim.backend.entities.TrackData
 import io.u11.skytrainsim.backend.entities.Way
-import java.time.LocalTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 // TODO - this can't handle splitting/coupling trains. Is that something to expect in revenue service?
@@ -12,8 +12,8 @@ data class SimulatedTrain(
     override val events: List<TrainTimelineEvent>,
 ) : TimelineContainer<TrainTimelineEvent> {
     fun filterTimes(
-        start: LocalTime = earliestTime.toLocalTime(),
-        end: LocalTime = latestTime.toLocalTime(),
+        start: OffsetDateTime = earliestTime,
+        end: OffsetDateTime = latestTime,
     ): SimulatedTrain {
         return copy(events = eventsBetween(start, end))
     }

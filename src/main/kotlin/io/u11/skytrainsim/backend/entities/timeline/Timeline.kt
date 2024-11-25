@@ -1,34 +1,44 @@
 package io.u11.skytrainsim.backend.entities.timeline
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import java.time.LocalTime
 import java.time.OffsetDateTime
 
-data class Timeline(
-    val trains: List<SimulatedTrain>,
-    override val events: List<GlobalTimelineEvent>,
-) : TimelineContainer<GlobalTimelineEvent> {
-    fun filterTimes(
-        start: LocalTime = earliestTime.toLocalTime(),
-        end: LocalTime = latestTime.toLocalTime(),
-    ): Timeline {
-        return copy(
-            trains = trains.map { it.filterTimes(start, end) }.filter { it.events.isNotEmpty() },
-            events = eventsBetween(start, end),
-        )
-    }
+interface ITimeline : TimelineContainer<GlobalTimelineEvent> {
+    val trains: List<SimulatedTrain>
 
     @get:JsonIgnore
-    val flattenedTimeline by lazy {
-        mutableListOf<SimulatedTimelineEvent>().also { l ->
-            l.addAll(trains.flatMap { it.events })
-            l.addAll(events)
-        }.asTimelineContainer
+    val flattenedTimeline get() = mutableListOf<SimulatedTimelineEvent>().also { l ->
+        l.addAll(trains.flatMap { it.events })
+        l.addAll(events)
+    }.asTimelineContainer
+
+    fun filterTimes(
+        start: OffsetDateTime = earliestTime,
+        end: OffsetDateTime = latestTime,
+    ): FilteredTimeline {
+        return FilteredTimeline(
+            start,
+            end,
+            trains.map { it.filterTimes(start, end) }.filter { it.events.isNotEmpty() },
+            eventsBetween(start, end),
+        )
     }
 
     override val earliestTime: OffsetDateTime get() = flattenedTimeline.earliestTime
     override val latestTime: OffsetDateTime get() = flattenedTimeline.latestTime
 }
+
+data class Timeline(
+    override val trains: List<SimulatedTrain>,
+    override val events: List<GlobalTimelineEvent>,
+) : ITimeline
+
+data class FilteredTimeline(
+    val filteredFrom: OffsetDateTime,
+    val filteredTo: OffsetDateTime,
+    override val trains: List<SimulatedTrain>,
+    override val events: List<GlobalTimelineEvent>,
+) : ITimeline
 
 interface TimelineContainer<E : SimulatedTimelineEvent> {
     val events: List<E>
@@ -36,12 +46,12 @@ interface TimelineContainer<E : SimulatedTimelineEvent> {
     val latestTime: OffsetDateTime get() = events.maxOfOrNull { it.timeTo } ?: OffsetDateTime.MAX
 
     fun eventsBetween(
-        start: LocalTime = earliestTime.toLocalTime(),
-        end: LocalTime = latestTime.toLocalTime(),
+        start: OffsetDateTime = earliestTime,
+        end: OffsetDateTime = latestTime,
     ): List<E> =
         events.filter {
-            val tf = it.timeFrom.toLocalTime()
-            val tt = it.timeTo.toLocalTime()
+            val tf = it.timeFrom
+            val tt = it.timeTo
 
             tf in start..end || tt in start..end || start in tf..tt || end in tf..tt
         }.sortedBy { it.timeFrom }
