@@ -114,4 +114,3 @@ data class TrainMoveChangingSpeedTimelineEvent(
         return path.positionAlong(0.5 * (time.toEpochSecond() - timeFrom.toEpochSecond()) * (speedTo - speedFrom))
     }
 }
-

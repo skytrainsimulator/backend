@@ -23,12 +23,14 @@ class RealtimeSimulatorController(val realtimeSimulatorService: RealtimeSimulato
         @RequestParam endInstant: Long?,
     ): ResponseEntity<ITimeline> {
         val timeline = realtimeSimulatorService.simulatedTimelineCache.get(date)
-        val filterFrom = startInstant?.let {
-            OffsetDateTime.ofInstant(Instant.ofEpochSecond(it), timeline.earliestTime.offset)
-        } ?: start?.let { OffsetDateTime.of(date, it, timeline.earliestTime.offset) }
-        val filterTo = endInstant?.let {
-            OffsetDateTime.ofInstant(Instant.ofEpochSecond(it), timeline.earliestTime.offset)
-        } ?: end?.let { OffsetDateTime.of(date, it, timeline.latestTime.offset) }
+        val filterFrom =
+            startInstant?.let {
+                OffsetDateTime.ofInstant(Instant.ofEpochSecond(it), timeline.earliestTime.offset)
+            } ?: start?.let { OffsetDateTime.of(date, it, timeline.earliestTime.offset) }
+        val filterTo =
+            endInstant?.let {
+                OffsetDateTime.ofInstant(Instant.ofEpochSecond(it), timeline.earliestTime.offset)
+            } ?: end?.let { OffsetDateTime.of(date, it, timeline.latestTime.offset) }
 
         return (
             if (filterFrom != null && filterTo != null) {

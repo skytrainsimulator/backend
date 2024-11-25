@@ -7,10 +7,11 @@ interface ITimeline : TimelineContainer<GlobalTimelineEvent> {
     val trains: List<SimulatedTrain>
 
     @get:JsonIgnore
-    val flattenedTimeline get() = mutableListOf<SimulatedTimelineEvent>().also { l ->
-        l.addAll(trains.flatMap { it.events })
-        l.addAll(events)
-    }.asTimelineContainer
+    val flattenedTimeline get() =
+        mutableListOf<SimulatedTimelineEvent>().also { l ->
+            l.addAll(trains.flatMap { it.events })
+            l.addAll(events)
+        }.asTimelineContainer
 
     fun filterTimes(
         start: OffsetDateTime = earliestTime,
