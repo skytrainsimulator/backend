@@ -1,6 +1,6 @@
 package io.u11.skytrainsim.backend.controller
 
-import io.u11.skytrainsim.backend.entities.Timeline
+import io.u11.skytrainsim.backend.entities.timeline.Timeline
 import io.u11.skytrainsim.backend.service.RealtimeSimulatorService
 import io.u11.skytrainsim.backend.util.responseEntity
 import org.springframework.http.ResponseEntity

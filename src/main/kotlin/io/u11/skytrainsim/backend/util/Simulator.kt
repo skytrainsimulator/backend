@@ -2,10 +2,10 @@
 
 package io.u11.skytrainsim.backend.util
 
-import io.u11.skytrainsim.backend.entities.NodeTrackPosition
-import io.u11.skytrainsim.backend.entities.PathingWay
-import io.u11.skytrainsim.backend.entities.TrackPosition
-import io.u11.skytrainsim.backend.entities.WayTrackPosition
+import io.u11.skytrainsim.backend.entities.timeline.NodeTrackPosition
+import io.u11.skytrainsim.backend.entities.timeline.PathingWay
+import io.u11.skytrainsim.backend.entities.timeline.TrackPosition
+import io.u11.skytrainsim.backend.entities.timeline.WayTrackPosition
 import org.jgrapht.Graph
 
 val Collection<PathingWay>.totalLength get() = this.sumOf { it.length }
